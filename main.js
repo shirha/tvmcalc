@@ -90,6 +90,7 @@ function calcNR(inPMT, inPV, inFV, inNP, inC) {
   //}
   lastNR = outNR;
   outNR = outNR - thePV1/theDeriv;
+  console.log(lastNR*100);
   if (i > 200) { // should throw an exception
    alert("The Nominal Rate cannot be computed.");
    return outNR = "";
