@@ -44,7 +44,7 @@ function calcPMT(inPV, inFV, inNR, inNP, inC) {
 }
 
 function calcNR(inPMT, inPV, inFV, inNP, inC) {
- var outNR = 0.1; // initial guess
+ var outNR = 0.3; // initial guess
  var thePV1, thePV2, theDeriv;
  var theH = 0.00001;
  var i = 1;
