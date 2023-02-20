@@ -437,7 +437,7 @@ function findNP(form) {
   return true;
  }
 
-var queryString = window.location.search;
+let queryString = window.location.search;
 if(queryString){
   let parms = queryString.slice(1).split(',');
   const form = document.forms[0];
@@ -446,7 +446,7 @@ if(queryString){
   }
   form.elements[10].selectedIndex = [1,2,4,12,52,365].findIndex(item => item == parms[5]);
   form.querySelector(`input[value=${parms[6]}]`).focus();
-  if(parms[6] == 'Periods' && parms[1] != '0'){findNP(document.forms[0])}
+  if(parms[6] == 'Periods' && parms[1] != '0'){findNP(form)}
 }
  
 // function launchTVMCalc() {
