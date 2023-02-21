@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  <meta name="mobile-web-app-capable" content="yes">
+<title>TVM Calculator</title>
+<link rel="stylesheet" type="text/css" href="skeleton-normalize-min.css">
+<link rel="manifest" href="manifest.json">
+<link rel="shortcut icon" type="image/png" href="favicon-512.png">
+<style type="text/css">
+:focus { outline: none; }
+input[type=button]:focus { background-color: #e8f0fe; }
+.red { background-color: red; }
+input, select { margin-bottom: 3px; }
+td { border-bottom-width: 0; padding: 0 10px 0 10px; }
+input:-webkit-autofill { -webkit-box-shadow: 0 0 0px 1000px white inset; }
+input[type=button],select { min-width:120px; background-color: #f8f8f8; }
+select { width: 118px; }
+a { padding-left: 16px; } 
+#minus,#reset {min-width: 38px; background-color: white; padding: 0; border: 1px solid #d1d1d1;}
+#minus {margin-left:12px; font-size:15px; }
+#reset {margin-left:42px; background-image: url('trash.png'); }
+</style></head><body><div class="container"><form name=TVMCalc><table>
+  <tr><td colspan="2"><center><h3>TVM Calculator</h3></center>
+  <tr><td><input onclick=findPV(this.form) type="button" value="PV"><td>$
+          <input maxLength="8" size="8" inputmode="decimal" pattern="[-.\d]*" type="text" autocomplete="off" name=PVInput>
+  <tr><td><input onclick=findPMT(this.form) type="button" value="PMT"><td>$
+          <input maxLength="8" size="8" inputmode="decimal" pattern="[-.\d]*" type="text" autocomplete="off" name=PMTInput>
+  <tr><td><input onclick=findFV(this.form) type="button" value="FV"><td>$
+          <input maxLength="8" size="8" inputmode="decimal" pattern="[-.\d]*" type="text" autocomplete="off" name=FVInput>
+  <tr><td><input onclick=findNR(this.form) type="button" value="Rate"><td>&nbsp;&nbsp;
+          <input maxLength="8" size="8" inputmode="decimal" pattern="[-.\d]*" type="text" autocomplete="off" name=NRInput>%
+  <tr><td><input onclick=findNP(this.form) type="button" value="Periods"><td>&nbsp;&nbsp;
+          <input maxLength="8" size="8" inputmode="decimal" pattern="[-.\d]*" type="text" autocomplete="off" name=NPInput>
+  <tr><td><select name=CInput> 
+    <option value=0>Annual 
+    <option value=1>Semiannual 
+    <option value=2>Quarterly 
+    <option value=3 selected>Monthly 
+    <option value=4>Weekly 
+    <option value=5>Daily</select><td>&nbsp;&nbsp;
+          <input maxLength="8" size="8" type="text" name=PmtxPer disabled></td>
+  <tr><td><a href="• Personal Finance3.pdf#page=1" target="_blank">Guide</a></td><td><input type="button" id="minus" value="&mdash;"><input type="button" id="reset" value="&nbsp;"></td> <!--26F6 20dd 1F5D1-->
+</table></form></div>
+<script src="main.js"></script>
+<script>
+let trgt = '';
+const ibox = document.querySelectorAll('input[inputmode="decimal"]');
+
+for (let i = 0; i < ibox.length; i++) {
+  if(ibox[i].name == "PVInput" || ibox[i].name == "PMTInput"){
+    ibox[i].addEventListener("focus", function() {
+      trgt = ibox[i];
+    });
+  }
+}
+
+document.getElementById("minus")
+  .addEventListener("click", function() {
+    if(trgt){
+      trgt.value = '-';
+      trgt.focus();
+    }
+    trgt = '';
+  });
+
+document.getElementById("reset")
+  .addEventListener("click", () => location.href = location.href.split('?')[0]);
+
+</script>
+</body></html>
+
