@@ -23,15 +23,15 @@ a { padding-left: 16px; }
 </style></head><body><div class="container"><form name=TVMCalc><table>
   <tr><td colspan="2"><center><h3>TVM Calculator</h3></center>
   <tr><td><input onclick=findPV(this.form) type="button" value="PV"><td>$
-          <input maxLength="8" size="8" inputmode="decimal" pattern="[-.\d]*" type="text" autocomplete="off" name=PVInput>
+          <input maxLength="8" size="8" inputmode="decimal" pattern="[.\d-]*" type="text" autocomplete="off" name=PVInput>
   <tr><td><input onclick=findPMT(this.form) type="button" value="PMT"><td>$
-          <input maxLength="8" size="8" inputmode="decimal" pattern="[-.\d]*" type="text" autocomplete="off" name=PMTInput>
+          <input maxLength="8" size="8" inputmode="decimal" pattern="[.\d-]*" type="text" autocomplete="off" name=PMTInput>
   <tr><td><input onclick=findFV(this.form) type="button" value="FV"><td>$
-          <input maxLength="8" size="8" inputmode="decimal" pattern="[-.\d]*" type="text" autocomplete="off" name=FVInput>
+          <input maxLength="8" size="8" inputmode="decimal" pattern="[.\d-]*" type="text" autocomplete="off" name=FVInput>
   <tr><td><input onclick=findNR(this.form) type="button" value="Rate"><td>&nbsp;&nbsp;
-          <input maxLength="8" size="8" inputmode="decimal" pattern="[-.\d]*" type="text" autocomplete="off" name=NRInput>%
+          <input maxLength="8" size="8" inputmode="decimal" pattern="[.\d-]*" type="text" autocomplete="off" name=NRInput>%
   <tr><td><input onclick=findNP(this.form) type="button" value="Periods"><td>&nbsp;&nbsp;
-          <input maxLength="8" size="8" inputmode="decimal" pattern="[-.\d]*" type="text" autocomplete="off" name=NPInput>
+          <input maxLength="8" size="8" inputmode="decimal" pattern="[.\d-]*" type="text" autocomplete="off" name=NPInput>
   <tr><td><select name=CInput> 
     <option value=0>Annual 
     <option value=1>Semiannual 
