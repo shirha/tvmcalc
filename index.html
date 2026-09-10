@@ -1,72 +1,495 @@
-<!DOCTYPE html>
-<html><head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-  <meta name="mobile-web-app-capable" content="yes">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TVM Calculator</title>
-<link rel="stylesheet" type="text/css" href="skeleton-normalize-min.css">
-<link rel="manifest" href="manifest.json">
-<link rel="shortcut icon" type="image/png" href="favicon-512.png">
-<style type="text/css">
-:focus { outline: none; }
-input[type=button]:focus { background-color: #e8f0fe; }
-.red { background-color: red; }
-input, select { margin-bottom: 3px; }
-td { border-bottom-width: 0; padding: 0 10px 0 10px; }
-input:-webkit-autofill { -webkit-box-shadow: 0 0 0px 1000px white inset; }
-input[type=button],select { min-width:120px; background-color: #f8f8f8; }
-select { width: 118px; text-transform: uppercase; font-size: 11px; text-align: center;}
-a { padding-left: 16px; } 
-#minus,#reset {min-width: 38px; background-color: white; padding: 0; border: 1px solid #d1d1d1;}
-#minus {margin-left:12px; font-size:15px; }
-#reset {margin-left:42px; background-image: url('trash.png'); }
-</style></head><body><div class="container"><form name=TVMCalc><table>
-  <tr><td colspan="2"><center><h3>TVM Calculator</h3></center>
-  <tr><td><input onclick=findPV(this.form) type="button" value="PV"><td>$
-          <input maxLength="8" size="8" inputmode="decimal" pattern="[.\d-]*" type="text" autocomplete="off" name=PVInput>
-  <tr><td><input onclick=findPMT(this.form) type="button" value="PMT"><td>$
-          <input maxLength="8" size="8" inputmode="decimal" pattern="[.\d-]*" type="text" autocomplete="off" name=PMTInput>
-  <tr><td><input onclick=findFV(this.form) type="button" value="FV"><td>$
-          <input maxLength="8" size="8" inputmode="decimal" pattern="[.\d-]*" type="text" autocomplete="off" name=FVInput>
-  <tr><td><input onclick=findNR(this.form) type="button" value="Rate"><td>&nbsp;&nbsp;
-          <input maxLength="8" size="8" inputmode="decimal" pattern="[.\d-]*" type="text" autocomplete="off" name=NRInput>%
-  <tr><td><input onclick=findNP(this.form) type="button" value="Periods"><td>&nbsp;&nbsp;
-          <input maxLength="8" size="8" inputmode="decimal" pattern="[.\d-]*" type="text" autocomplete="off" name=NPInput>
-  <tr><td><select name=CInput> 
-    <option value=0>Annual 
-    <option value=1>Semiannual 
-    <option value=2>Quarterly 
-    <option value=3 selected>Monthly 
-    <option value=4>Weekly 
-    <option value=5>Daily</select><td>&nbsp;&nbsp;
-          <input maxLength="8" size="8" type="text" name=PmtxPer disabled></td>
-  <tr><td><a href="• Personal Finance3.pdf#page=1" target="_blank">Guide</a></td><td><input type="button" id="minus" value="&mdash;"><input type="button" id="reset" value="&nbsp;"></td> <!--26F6 20dd 1F5D1-->
-</table></form></div>
-<script src="main.js"></script>
-<script>
-let trgt = '';
-const ibox = document.querySelectorAll('input[inputmode="decimal"]');
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: white;
+    /*color: #111;*/
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .app {
+    width: 320px;
+    margin: 10px auto;
+  }
+  h1 {
+    margin: 8px 0 26px;
+    text-align: center;
+    font-size: 32px;
+    font-weight: 400;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 120px 24px 118px 20px;
+    align-items: center;
+    min-height: 42px;
+    margin-bottom: 0;
+  }
+  .key {
+    height: 38px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fafafa;
+/*    color: #333;
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    letter-spacing: .5px;*/
+  }
+  .key.solve {
+    background: #dce8fa;
+  }
+  .prefix {
+    text-align: center;
+    font-size: 16px;
+  }
+  input, select {
+    width: 118px;
+    height: 38px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    padding: 0 10px;
+/*    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #111;*/
+  }
+  input:focus, select:focus, button:focus {
+    outline: 2px solid #9bbce8;
+    outline-offset: -1px;
+  }
+  input[readonly] {
+    background: #fdfdfd;
+  }
+  .rate-prefix {
+    text-align: right;
+    padding-right: 6px;
+  }
+  .percent {
+    padding-left: 5px;
+    font-size: 16px;
+  }
+  .rate-type {
+    margin-left: 12px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+  }
+  .rate-type label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+  .rate-type input {
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
+  }
+  input[type="radio"]:focus {
+    outline: none;
+    box-shadow: none;
+  }  
+  .bottom {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+  }
+  .guide {
+    color: #1595dc;
+    text-decoration: underline;
+    margin-left: 16px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .small-buttons {
+    margin-left: 12px; /*auto;*/
+    display: flex;
+    gap: 12px; /*34px;*/
+    align-items: center;
+  }
+  .small {
+    width: 38px;
+    height: 38px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    /*color: #444;*/
+    font-size: 22px;
+    cursor: pointer;
+  }
+/*  .trash {
+    font-size: 19px;
+  }*/
+  .help {
+    display: none;
+    margin: 12px 0 0 16px;
+    width: 285px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: #444;
+  }
+  #clear {background-image: url('trash.png'); }
+  @media (max-width: 360px) {
+    .app { width: 300px; }
+    .row { grid-template-columns: 110px 22px 118px; }
+    .key { width: 110px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>TVM Calculator</h1>
 
-for (let i = 0; i < ibox.length; i++) {
-  if(ibox[i].name == "PVInput" || ibox[i].name == "PMTInput"){
-    ibox[i].addEventListener("focus", function() {
-      trgt = ibox[i];
+  <div class="row">
+    <button class="key" data-var="PV">PV</button>
+    <div class="prefix">$</div>
+    <input id="PV" type="number" step="any" inputmode="decimal">
+  </div>
+
+  <div class="row">
+    <button class="key" data-var="PMT">PMT</button>
+    <div class="prefix">$</div>
+    <input id="PMT" type="number" step="any" inputmode="decimal">
+  </div>
+
+  <div class="row">
+    <button class="key" data-var="FV">FV</button>
+    <div class="prefix">$</div>
+    <input id="FV" type="number" step="any" inputmode="decimal">
+  </div>
+
+  <div class="row">
+    <button class="key" data-var="RATE">RATE</button>
+    <div class="prefix rate-prefix"></div>
+    <input id="RATE" type="number" step="any" inputmode="decimal">
+    <span class="percent">%</span>
+  </div>
+
+  <div class="row">
+    <button class="key" data-var="PERIODS">PERIODS</button>
+    <div class="prefix"></div>
+    <input id="PERIODS" type="number" step="any" inputmode="decimal">
+  </div>
+
+  <div class="row">
+    <select id="frequency" aria-label="Compounding frequency">
+      <option value="1">ANNUAL</option>
+      <option value="2">SEMIANNUAL</option>
+      <option value="4">QUARTERLY</option>
+      <option value="12">MONTHLY</option>
+      <option value="52">WEEKLY</option>
+      <option value="365">DAILY</option>
+    </select>
+    <div></div>
+    <!-- <input id="freqDisplay" aria-hidden="true" tabindex="-1" readonly style="visibility:hidden"> -->
+    <input id="PmtxPer" type="text" disabled>
+  </div>
+
+  <div class="bottom">
+    <a class="guide" id="guide">Guide</a>
+
+    <div class="rate-type">
+      <label><input type="radio" name="rateType" value="effective" checked> Eff</label>
+      <label><input type="radio" name="rateType" value="nominal"> Nom</label>
+    </div>
+
+    <div class="small-buttons">
+      <button class="small" id="minus" title="Insert Minus">—</button>
+      <button class="small trash" id="clear" title="Clear calculator" aria-label="Clear calculator">&nbsp;</button>
+    </div>
+  </div>
+
+  <div class="help" id="help">
+    <b>TVM Calculator</b><br>
+    Enter four known values and select the fifth value to calculate.
+    Money received is positive; money paid or invested is negative.
+    The rate is entered as an annual percentage, while periods are
+    the number of compounding periods.
+  </div>
+</div>
+
+<script>
+(() => {
+  const fields = ["PV", "PMT", "FV", "RATE", "PERIODS"];
+  const els = Object.fromEntries(fields.map(k => [k, document.getElementById(k)]));
+  const frequency = document.getElementById("frequency");
+  const rateTypeButtons = [...document.querySelectorAll('input[name="rateType"]')];
+  const solveButtons = [...document.querySelectorAll(".key")];
+  PmtxPer = document.getElementById("PmtxPer");
+  const minus = document.getElementById("minus");
+  let trgt = minus;
+  let solveFor = "FV";
+  let rateType = "effective"; //"nominal";
+
+
+  // URL format:
+  // ?PV,PMT,FV,RATE,PERIODS,frequency,solveFor,rateType
+  // Example:
+  // ?0,-625,4199446.07,25,240,12,FV,Nom
+  // Old URLs without rateType remain Nominal for compatibility
+
+  function clear() { // updateHistory = false) {
+    fields.forEach(k => els[k].value = "");
+    frequency.value = "12";
+    rateType = "effective"; //"nominal";
+    rateTypeButtons.forEach(r => r.checked = r.value === rateType);
+    solveFor = "FV";
+    updateAppearance();
+
+    const cleanUrl = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, cleanUrl);
+
+    // if (updateHistory) updateUrl();
+  }
+
+  function loadUrl() {
+    const raw = location.search.slice(1);
+
+    if (!raw) {
+      clear();
+      return false;
+    }
+
+    // existing URL parsing code...
+
+    const p = raw.split(",");
+    if (p.length >= 5) {
+      fields.forEach((k, i) => {
+        if (p[i] !== undefined && p[i] !== "") els[k].value = p[i];
+      });
+      if (p[5]) frequency.value = p[5];
+      if (p[6] && fields.includes(p[6].toUpperCase()))
+        solveFor = p[6].toUpperCase();
+      if (p[7]) {
+        const t = p[7].toLowerCase();
+        if (t === "eff" || t === "effective" || t === "e") rateType = "effective";
+        if (t === "nom" || t === "nominal" || t === "n") rateType = "nominal";
+      }
+      rateTypeButtons.forEach(r => r.checked = r.value === rateType);
+    }
+    
+    return true;
+  }
+
+  function num(id) {
+    const v = parseFloat(els[id].value);
+    return Number.isFinite(v) ? v : 0;
+  }
+
+  function setValue(id, value) {
+    if (!Number.isFinite(value)) {
+      els[id].value = "";
+      return;
+    }
+    // Computed values are displayed to no more than two decimal places.
+    // Avoid displaying the occasional floating-point -0.00.
+    if (Math.abs(value) < 0.005) value = 0;
+    els[id].value = Number(value.toFixed(2));
+  }
+
+  // Convert the displayed annual rate to the periodic rate used by the TVM formulas.
+  // Nominal: periodic rate = nominal annual rate / m.
+  // Effective: periodic rate = (1 + effective annual rate)^(1/m) - 1.
+  function periodicRate(annualRate, m) {
+    if (rateType === "effective") {
+      if (1 + annualRate <= 0) return NaN;
+      return Math.pow(1 + annualRate, 1 / m) - 1;
+    }
+    return annualRate / m;
+  }
+
+  // Convert a periodic rate back to the displayed annual rate.
+  function annualRateFromPeriodic(i, m) {
+    if (rateType === "effective") {
+      return Math.pow(1 + i, m) - 1;
+    }
+    return i * m;
+  }
+
+  function futureValue(PV, PMT, annualRate, n, m) {
+    const i = periodicRate(annualRate, m);
+    if (Math.abs(i) < 1e-14) return -(PV + PMT * n);
+    const a = Math.pow(1 + i, n);
+    return -(PV * a + PMT * (a - 1) / i);
+  }
+
+  function presentValue(PMT, FV, annualRate, n, m) {
+    const i = periodicRate(annualRate, m);
+    if (Math.abs(i) < 1e-14) return -(FV + PMT * n);
+    const a = Math.pow(1 + i, n);
+    return -(FV + PMT * (a - 1) / i) / a;
+  }
+
+  function payment(PV, FV, annualRate, n, m) {
+    const i = periodicRate(annualRate, m);
+    if (Math.abs(i) < 1e-14) return -(PV + FV) / n;
+    const a = Math.pow(1 + i, n);
+    return -(PV * a + FV) * i / (a - 1);
+  }
+
+  function periods(PV, PMT, FV, annualRate, m) {
+    const i = periodicRate(annualRate, m);
+    if (Math.abs(i) < 1e-14) return -(PV + FV) / PMT;
+    const x = (PMT - FV * i) / (PV * i + PMT);
+    if (x <= 0 || 1 + i <= 0) return NaN;
+    return Math.log(x) / Math.log(1 + i);
+  }
+
+  function rate(PV, PMT, FV, n, m) {
+    if (n === 0) return NaN;
+
+    // Solve directly for the periodic rate. Keeping the solver in periodic
+    // rate space avoids unnecessary annual-rate conversions while iterating.
+    const f = i => {
+      if (1 + i <= 0) return NaN;
+      const a = Math.pow(1 + i, n);
+      if (!Number.isFinite(a)) return Infinity;
+      if (Math.abs(i) < 1e-14) return -(PV + PMT * n) - FV;
+      return -(PV * a + PMT * (a - 1) / i) - FV;
+    };
+
+    // Bracket the periodic rate. It must be greater than -100%.
+    let lo = -0.999999;
+    let hi = 1;
+    let flo = f(lo), fhi = f(hi);
+
+    // Expand the upper bound until the root is bracketed.
+    for (let j = 0; j < 60 && flo * fhi > 0; j++) {
+      hi *= 2;
+      fhi = f(hi);
+    }
+
+    if (!Number.isFinite(flo) || flo * fhi > 0) return NaN;
+
+    // Bisection: slower than Newton, but extremely robust for TVM.
+    for (let j = 0; j < 200; j++) {
+      const mid = (lo + hi) / 2;
+      const fm = f(mid);
+      if (!Number.isFinite(fm)) {
+        hi = mid;
+        continue;
+      }
+      if (Math.abs(fm) < 1e-7 || Math.abs(hi - lo) < 1e-12) return mid;
+      if (flo * fm <= 0) {
+        hi = mid;
+        fhi = fm;
+      } else {
+        lo = mid;
+        flo = fm;
+      }
+    }
+    return (lo + hi) / 2;
+  }
+
+  function calculate() {
+    const m = parseFloat(frequency.value);
+    let PV = num("PV"), PMT = num("PMT"), FV = num("FV");
+    let annualRate = num("RATE") / 100;
+    let n = num("PERIODS");
+
+    let result;
+
+    PmtxPer.value = "";
+    switch (solveFor) {
+      case "PV":
+        result = presentValue(PMT, FV, annualRate, n, m);
+        setValue("PV", result);
+        break;
+      case "PMT":
+        result = payment(PV, FV, annualRate, n, m);
+        setValue("PMT", result);
+        break;
+      case "FV":
+        result = futureValue(PV, PMT, annualRate, n, m);
+        setValue("FV", result);
+        break;
+      case "RATE":
+        result = rate(PV, PMT, FV, n, m);
+        setValue("RATE", annualRateFromPeriodic(result, m) * 100);
+        break;
+      case "PERIODS":
+        result = periods(PV, PMT, FV, annualRate, m);
+        setValue("PERIODS", result);
+        // console.log(`PMT:${PMT}, n:${n}, m:${m}`);
+        PmtxPer.value = Number(Math.abs(PMT * n).toFixed(2));
+        break;
+    }
+
+    updateUrl();
+    updateAppearance();
+  }
+
+  function updateAppearance() {
+    solveButtons.forEach(b => {
+      b.classList.toggle("solve", b.dataset.var === solveFor);
     });
   }
-}
 
-document.getElementById("minus")
-  .addEventListener("click", function() {
-    if(trgt){
-      trgt.value = '-';
-      trgt.focus();
-    }
-    trgt = '';
+  function updateUrl() {
+    const values = fields.map(k => els[k].value || "");
+    const query = values.concat([frequency.value, solveFor, rateType === "effective" ? "Eff" : "Nom"]).join(",");
+    history.replaceState(null, "", "?" + query);
+  }
+
+  solveButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      solveFor = button.dataset.var;
+      calculate();
+    });
   });
 
-document.getElementById("reset")
-  .addEventListener("click", () => location.href = location.href.split('?')[0]);
+  fields.forEach(id => {
+    // els[id].addEventListener("focus", () => {
+    //   trgt = els[id];
+    // });
+    els[id].addEventListener("change", () => {
+      if (id !== solveFor) calculate();
+    });
+    els[id].addEventListener("keydown", e => {
+      if (e.key === "Enter") calculate();
+    });
+  });
 
+  rateTypeButtons.forEach(radio => {
+    radio.addEventListener("change", () => {
+      rateType = radio.value;
+      calculate();
+    });
+  });
+
+  frequency.addEventListener("change", calculate);
+
+  document.addEventListener("focusin", (event) => {
+    if (event.target !== minus) 
+      trgt = event.target;
+  });
+  
+  minus.addEventListener("click", () => {
+    if([els['PV'], els['PMT']].includes(trgt)){
+      trgt.value = '-0';
+      trgt.focus();
+    }
+    trgt = minus;
+  });
+
+  document.getElementById("clear").addEventListener("click", clear);
+
+  document.getElementById("guide").addEventListener("click", () => {
+    const help = document.getElementById("help");
+    help.style.display = help.style.display === "block" ? "none" : "block";
+  });
+
+  const hasUrlData = loadUrl();
+  updateAppearance();
+  if (hasUrlData) calculate();
+})();
 </script>
-</body></html>
-
+</body>
+</html>
