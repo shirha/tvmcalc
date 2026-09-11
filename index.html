@@ -9,7 +9,6 @@
   body {
     margin: 0;
     background: white;
-    /*color: #111;*/
     font-family: Arial, Helvetica, sans-serif;
   }
   .app {
@@ -34,10 +33,6 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     background: #fafafa;
-/*    color: #333;
-    font-family: "Courier New", monospace;
-    font-size: 13px;
-    letter-spacing: .5px;*/
   }
   .key.solve {
     background: #dce8fa;
@@ -53,9 +48,6 @@
     border-radius: 4px;
     background: #fff;
     padding: 0 10px;
-/*    font-size: 16px;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #111;*/
   }
   input:focus, select:focus, button:focus {
     outline: 2px solid #9bbce8;
@@ -109,9 +101,9 @@
     cursor: pointer;
   }
   .small-buttons {
-    margin-left: 12px; /*auto;*/
+    margin-left: 12px;
     display: flex;
-    gap: 12px; /*34px;*/
+    gap: 12px;
     align-items: center;
   }
   .small {
@@ -125,9 +117,6 @@
     font-weight: bold;
     cursor: pointer;
   }
-/*  .trash {
-    font-size: 19px;
-  }*/
   .help {
     display: none;
     margin: 12px 0 0 16px;
@@ -136,7 +125,9 @@
     line-height: 1.45;
     color: #444;
   }
-  #clear {background-image: url('trash.png'); }
+  #clear {
+    background-image: url('trash.png'); 
+  }
   @media (max-width: 360px) {
     .app { width: 300px; }
     .row { grid-template-columns: 110px 22px 118px; }
@@ -203,7 +194,7 @@
 
     <div class="small-buttons">
       <button class="small" id="minus" title="Insert Minus">—</button>
-      <button class="small trash" id="clear" title="Clear calculator" aria-label="Clear calculator">&nbsp;</button>
+      <button class="small" id="clear" title="Clear calculator" aria-label="Clear calculator">&nbsp;</button>
     </div>
   </div>
 
@@ -223,11 +214,11 @@
   const frequency = document.getElementById("frequency");
   const rateTypeButtons = [...document.querySelectorAll('input[name="rateType"]')];
   const solveButtons = [...document.querySelectorAll(".key")];
-  PmtxPer = document.getElementById("PmtxPer");
+  const PmtxPer = document.getElementById("PmtxPer");
   const minus = document.getElementById("minus");
   let trgt = minus;
   let solveFor = "FV";
-  let rateType = "effective"; //"nominal";
+  let rateType = "effective";
 
 
   // URL format:
@@ -236,7 +227,7 @@
   // ?0,-625,4199446.07,25,240,12,FV,Nom
   // Old URLs without rateType remain Nominal for compatibility
 
-  function clear() { // updateHistory = false) {
+  function clear() {
     fields.forEach(k => els[k].value = "");
     frequency.value = "12";
     rateType = "effective"; //"nominal";
@@ -246,8 +237,6 @@
 
     const cleanUrl = window.location.origin + window.location.pathname;
     window.history.replaceState({}, document.title, cleanUrl);
-
-    // if (updateHistory) updateUrl();
   }
 
   function loadUrl() {
@@ -257,8 +246,6 @@
       clear();
       return false;
     }
-
-    // existing URL parsing code...
 
     const p = raw.split(",");
     if (p.length >= 5) {
@@ -396,8 +383,8 @@
     let n = num("PERIODS");
 
     let result;
-
     PmtxPer.value = "";
+
     switch (solveFor) {
       case "PV":
         result = presentValue(PMT, FV, annualRate, n, m);
@@ -418,7 +405,6 @@
       case "PERIODS":
         result = periods(PV, PMT, FV, annualRate, m);
         setValue("PERIODS", result);
-        // console.log(`PMT:${PMT}, n:${n}, m:${m}`);
         PmtxPer.value = Number(Math.abs(PMT * n).toFixed(2));
         break;
     }
@@ -445,18 +431,6 @@
       calculate();
     });
   });
-
-  // fields.forEach(id => {
-  //   // els[id].addEventListener("focus", () => {
-  //   //   trgt = els[id];
-  //   // });
-  //   els[id].addEventListener("change", () => {
-  //     if (id !== solveFor) calculate();
-  //   });
-  //   els[id].addEventListener("keydown", e => {
-  //     if (e.key === "Enter") calculate();
-  //   });
-  // });
 
   rateTypeButtons.forEach(radio => {
     radio.addEventListener("change", () => {
