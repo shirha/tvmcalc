@@ -120,8 +120,9 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     background: white;
-    /*color: #444;*/
-    font-size: 22px;
+    color: #888;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
   }
 /*  .trash {
@@ -445,17 +446,17 @@
     });
   });
 
-  fields.forEach(id => {
-    // els[id].addEventListener("focus", () => {
-    //   trgt = els[id];
-    // });
-    els[id].addEventListener("change", () => {
-      if (id !== solveFor) calculate();
-    });
-    els[id].addEventListener("keydown", e => {
-      if (e.key === "Enter") calculate();
-    });
-  });
+  // fields.forEach(id => {
+  //   // els[id].addEventListener("focus", () => {
+  //   //   trgt = els[id];
+  //   // });
+  //   els[id].addEventListener("change", () => {
+  //     if (id !== solveFor) calculate();
+  //   });
+  //   els[id].addEventListener("keydown", e => {
+  //     if (e.key === "Enter") calculate();
+  //   });
+  // });
 
   rateTypeButtons.forEach(radio => {
     radio.addEventListener("change", () => {
