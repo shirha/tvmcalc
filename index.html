@@ -43,26 +43,15 @@
     background-color:   #ffe6ea;
     transition: background-color 0.5s;
   }*/
-
   input.invalid {
     animation: invalidPulse 1.5s ease-in-out forwards;
   }
-
   @keyframes invalidPulse {
-    0% {
-      background-color: white;
-    }
-    20% {
-      background-color: #ffe6ea;
-    }
-    80% {
-      background-color: #ffe6ea;
-    }
-    100% {
-      background-color: white;
-    }
+    0% {background-color: white;}
+    25% {background-color: #ffe6ea;}
+    75% {background-color: #ffe6ea;}
+    100% {background-color: white;}
   }
-
   .prefix {
     text-align: center;
     font-size: 16px;
@@ -224,7 +213,7 @@
   <div class="help" id="help">
     <b>TVM Calculator</b><br>
     Enter four known values and select the fifth value to calculate.
-    Money received or loaned is positive; money paid or invested is negative.
+    Money received or loaned to you is positive; money paid or invested is negative.
     The rate is entered as an annual percentage, while periods are
     the number of compounding periods.
   </div>
@@ -299,12 +288,6 @@
       return;
     }
 
-    // Suppress the “all fields empty → 0” case
-    // if (Math.abs(value) < 0.005) {
-    //   els[id].value = "";
-    //   // els[id].value = ['PV','FV'].includes(id) ? 0 : "";
-    //   return;
-    // }
     if (Math.abs(value) < 0.005) value = 0;
 
     els[id].value = Number(value.toFixed(2));
@@ -404,43 +387,6 @@
     return (lo + hi) / 2;
   }
 
-  // function calculate() {
-  //   const m = parseFloat(frequency.value);
-  //   let PV = num("PV"), PMT = num("PMT"), FV = num("FV");
-  //   let annualRate = num("RATE") / 100;
-  //   let n = num("PERIODS");
-
-  //   let result;
-  //   PmtxPer.value = "";
-
-  //   switch (solveFor) {
-  //     case "PV":
-  //       result = presentValue(PMT, FV, annualRate, n, m);
-  //       setValue("PV", result);
-  //       break;
-  //     case "PMT":
-  //       result = payment(PV, FV, annualRate, n, m);
-  //       setValue("PMT", result);
-  //       break;
-  //     case "FV":
-  //       result = futureValue(PV, PMT, annualRate, n, m);
-  //       setValue("FV", result);
-  //       break;
-  //     case "RATE":
-  //       result = rate(PV, PMT, FV, n, m);
-  //       setValue("RATE", annualRateFromPeriodic(result, m) * 100);
-  //       break;
-  //     case "PERIODS":
-  //       result = periods(PV, PMT, FV, annualRate, m);
-  //       setValue("PERIODS", result);
-  //       PmtxPer.value = Number(Math.abs(PMT * n).toFixed(2));
-  //       break;
-  //   }
-
-  //   updateUrl();
-  //   updateAppearance();
-  // }
-
   function calculate() {
     updateAppearance();
     const m = parseFloat(frequency.value);
@@ -469,7 +415,6 @@
       return;   // stop here – do not calculate
     }
 
-    // ----- normal calculation path (unchanged) -----
     let PV         = values.PV;
     let PMT        = values.PMT;
     let FV         = values.FV;
