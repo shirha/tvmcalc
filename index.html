@@ -387,7 +387,7 @@
     return (lo + hi) / 2;
   }
 
-  function calculate() {
+  function calculate(flash = true) {
     updateAppearance();
     const m = parseFloat(frequency.value);
 
@@ -404,14 +404,15 @@
 
     // Early exit + visual feedback
     if (missing.length > 0) {
-      // Flash the missing fields pink
-      missing.forEach(k => els[k].classList.add("invalid"));
+      if (flash) {
+        // Flash the missing fields pink
+        missing.forEach(k => els[k].classList.add("invalid"));
 
-      // Remove the pink after 1 second
-      setTimeout(() => {
-        missing.forEach(k => els[k].classList.remove("invalid"));
-      }, 1500);
-
+        // Remove the pink after 1 second
+        setTimeout(() => {
+          missing.forEach(k => els[k].classList.remove("invalid"));
+        }, 1500);
+      }
       return;   // stop here – do not calculate
     }
 
@@ -473,7 +474,7 @@
   rateTypeButtons.forEach(radio => {
     radio.addEventListener("change", () => {
       rateType = radio.value;
-      calculate();
+      calculate(false);
     });
   });
 
