@@ -452,7 +452,6 @@
           PmtxPer.value = Number(Math.abs(PMT * result).toFixed(2));
         break;
     }
-
     updateUrl();
   }
 
@@ -482,16 +481,10 @@
     });
   });
 
-  // frequency.addEventListener("change", calculate);
   frequency.addEventListener("change", () => {
     calculate(false);
   });
 
-  document.addEventListener("focusin", (event) => {
-    if (event.target !== minus) 
-      trgt = event.target;
-  });
-  
   minus.addEventListener("click", () => {
     if([els['PV'], els['PMT']].includes(trgt)){
       trgt.value = '-0';
@@ -500,6 +493,12 @@
     trgt = minus;
   });
 
+  // document level listener, focusin bubbles up, focus doesn't
+  document.addEventListener("focusin", (event) => {
+    if (event.target !== minus) 
+      trgt = event.target;
+  });
+  
   document.getElementById("clear").addEventListener("click", clear);
 
   document.getElementById("guide").addEventListener("click", () => {
