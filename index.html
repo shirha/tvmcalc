@@ -241,9 +241,11 @@
   function clear() {
     fields.forEach(k => els[k].value = "");
     frequency.value = "12";
-    rateType = "effective"; //"nominal";
+    rateType = "effective";
     rateTypeButtons.forEach(r => r.checked = r.value === rateType);
     solveFor = "FV";
+    PmtxPer.value = "";
+
     updateAppearance();
 
     const cleanUrl = window.location.origin + window.location.pathname;
@@ -389,7 +391,6 @@
 
   function calculate(flash = true) {
     updateAppearance();
-    const m = parseFloat(frequency.value);
 
     // Collect current values (empty → NaN)
     const values = {};
@@ -416,11 +417,12 @@
       return;   // stop here – do not calculate
     }
 
-    let PV         = values.PV;
-    let PMT        = values.PMT;
-    let FV         = values.FV;
-    let annualRate = values.RATE / 100;
-    let n          = values.PERIODS;
+    const PV         = values.PV;
+    const PMT        = values.PMT;
+    const FV         = values.FV;
+    const annualRate = values.RATE / 100;
+    const n          = values.PERIODS;
+    const m          = parseFloat(frequency.value);
 
     let result;
     PmtxPer.value = "";
@@ -445,7 +447,9 @@
       case "PERIODS":
         result = periods(PV, PMT, FV, annualRate, m);
         setValue("PERIODS", result);
-        PmtxPer.value = Number(Math.abs(PMT * n).toFixed(2));
+        console.log(`PMT: ${PMT} * PER: ${result} = ${(PMT * result).toFixed(2)}`)
+        if (Number.isFinite(result))
+          PmtxPer.value = Number(Math.abs(PMT * result).toFixed(2));
         break;
     }
 
@@ -478,7 +482,10 @@
     });
   });
 
-  frequency.addEventListener("change", calculate);
+  // frequency.addEventListener("change", calculate);
+  frequency.addEventListener("change", () => {
+    calculate(false);
+  });
 
   document.addEventListener("focusin", (event) => {
     if (event.target !== minus) 
