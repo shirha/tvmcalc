@@ -154,19 +154,19 @@
   <div class="row">
     <button class="key" data-var="PV">PV</button>
     <div class="prefix">$</div>
-    <input id="PV" type="number" step="any" inputmode="decimal">
+    <input id="PV" type="text" step="any" inputmode="decimal">
   </div>
 
   <div class="row">
     <button class="key" data-var="PMT">PMT</button>
     <div class="prefix">$</div>
-    <input id="PMT" type="number" step="any" inputmode="decimal">
+    <input id="PMT" type="text" step="any" inputmode="decimal">
   </div>
 
   <div class="row">
     <button class="key" data-var="FV">FV</button>
     <div class="prefix">$</div>
-    <input id="FV" type="number" step="any" inputmode="decimal">
+    <input id="FV" type="text" step="any" inputmode="decimal">
   </div>
 
   <div class="row">
@@ -192,7 +192,7 @@
       <option value="365">DAILY</option>
     </select>
     <div></div>
-    <input id="PmtxPer" type="text" disabled>
+    <input id="PmtxPer" type="text"><!-- disabled -->
   </div>
 
   <div class="bottom">
@@ -220,22 +220,24 @@
     <p>
     <a href="?0,-1625,1167171.25,10,240,12,PERIODS,Eff">
     S&P500 401K</a> - Taxable<br>
-    $1625 / mo * 12 = $19500 / yr Contrib: 390,000
+    <!-- $1625 / mo * 12 = $19500 / yr Contrib: 390,000 -->
+    To save $1.1M for retirement you have to contribute one-third of it ($390,000) and I don't think you can get 10% returns. Plus it's taxable.<br>
     <a href="?0,-625,2854939.09,25,240,12,PERIODS,Eff">
     BTC Roth</a> - Tax free<br>
-    $625 / mo * 12 = $7500 / yr Contrib: 150,000<br>
+    <!-- $625 / mo * 12 = $7500 / yr Contrib: 150,000<br> -->
+    To save $2.8-5.3M Bull case for retirement you have to contribute 5-3% of it ($150,000). Plus it's tax-free. You end up with 2.86 / 6.81 ≈ 0.42 BTC.<br>
     <a href="?-78500,0,6808789.64,25,240,12,FV,Eff">
     BTC Roth - Price</a><br>
-    2.86 / 6.81 = 0.42 BTC. Try a 30% Rate<br>
+    Try a 30% Rate<br>
     </p>
     <p>
     Michael Saylor's Bitcoin24<br>
-    <a href="?-65,0,3263.18,20.5,21,1,FV,Eff" class="saylor">
+    <a href="?-65000,0,3263182.34,20.5,21,1,FV,Eff" class="saylor">
     Bear,</a> 
-    <a href="?-65,0,13434.6,28.9,21,1,FV,Eff" class="saylor">
+    <a href="?-65000,0,13434596.31,28.9,21,1,FV,Eff" class="saylor">
     Base</a> and
-    <a href="?-65,0,49056.88,37.1,21,1,FV,Eff" class="saylor">
-    Bull</a> case in $1K.<br>
+    <a href="?-65000,0,49056878.13,37.1,21,1,FV,Eff" class="saylor">
+    Bull</a> case.<br>
     Try a 11 year period.
     </p>
     <p>
@@ -266,6 +268,7 @@
 <script>
 (() => {
   const fields = ["PV", "PMT", "FV", "RATE", "PERIODS"];
+  const currencyFields = ["PV", "PMT", "FV"];
   const els = Object.fromEntries(fields.map(k => [k, document.getElementById(k)]));
   const frequency = document.getElementById("frequency");
   const rateTypeButtons = [...document.querySelectorAll('input[name="rateType"]')];
@@ -276,56 +279,28 @@
   let solveFor = "FV";
   let rateType = "effective";
 
-  // URL format:
-  // ?PV,PMT,FV,RATE,PERIODS,frequency,solveFor,rateType
-  // Example:
-  // ?0,-625,4199446.07,25,240,12,FV,Nom
-  // Old URLs without rateType remain Nominal for compatibility
-
-  function clear() {
-    fields.forEach(k => els[k].value = "");
-    frequency.value = "12";
-    rateType = "effective";
-    rateTypeButtons.forEach(r => r.checked = r.value === rateType);
-    solveFor = "FV";
-    PmtxPer.value = "";
-
-    updateAppearance();
-
-    const cleanUrl = window.location.origin + window.location.pathname;
-    window.history.replaceState({}, document.title, cleanUrl);
+  // ---------- helpers for commas ----------
+  function cleanNumber(str) {
+    if (typeof str !== "string") return str;
+    return str
+      .replace(/[^0-9.-]/g, "")
+      .replace(/(?!^)-/g, "")
+      .replace(/(\..*)\./g, "$1");
   }
 
-  function loadUrl() {
-    const raw = location.search.slice(1);
-
-    if (!raw) {
-      clear();
-      return false;
-    }
-
-    const p = raw.split(",");
-    if (p.length >= 5) {
-      fields.forEach((k, i) => {
-        if (p[i] !== undefined && p[i] !== "") els[k].value = p[i];
-      });
-      if (p[5]) frequency.value = p[5];
-      if (p[6] && fields.includes(p[6].toUpperCase()))
-        solveFor = p[6].toUpperCase();
-      if (p[7]) {
-        const t = p[7].toLowerCase();
-        if (t === "eff" || t === "effective" || t === "e") rateType = "effective";
-        if (t === "nom" || t === "nominal" || t === "n") rateType = "nominal";
-      }
-      rateTypeButtons.forEach(r => r.checked = r.value === rateType);
-    }
-    
-    return true;
+  function getValue(id) {
+    const cleaned = cleanNumber(els[id].value);
+    const v = parseFloat(cleaned);
+    return Number.isFinite(v) ? v : NaN;
   }
 
-  function num(id) {
-    const v = parseFloat(els[id].value);
-    return Number.isFinite(v) ? v : 0;
+  function formatCurrency(value) {
+    if (!Number.isFinite(value)) return "";
+    if (Math.abs(value) < 0.005) value = 0;
+    return value.toLocaleString("en-US", {
+      // minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
   }
 
   function setValue(id, value) {
@@ -333,15 +308,25 @@
       els[id].value = "";
       return;
     }
-
     if (Math.abs(value) < 0.005) value = 0;
 
-    els[id].value = Number(value.toFixed(2));
+    if (currencyFields.includes(id)) {
+      els[id].value = formatCurrency(value);
+    } else {
+      els[id].value = Number(value.toFixed(2));
+    }
   }
 
-  // Convert the displayed annual rate to the periodic rate used by the TVM formulas.
-  // Nominal: periodic rate = nominal annual rate / m.
-  // Effective: periodic rate = (1 + effective annual rate)^(1/m) - 1.
+  function formatAllCurrencyFields() {
+    currencyFields.forEach(id => {
+      const v = getValue(id);
+      if (Number.isFinite(v)) {
+        els[id].value = formatCurrency(v);
+      }
+    });
+  }
+
+  // ---------- TVM math (unchanged) ----------
   function periodicRate(annualRate, m) {
     if (rateType === "effective") {
       if (1 + annualRate <= 0) return NaN;
@@ -350,7 +335,6 @@
     return annualRate / m;
   }
 
-  // Convert a periodic rate back to the displayed annual rate.
   function annualRateFromPeriodic(i, m) {
     if (rateType === "effective") {
       return Math.pow(1 + i, m) - 1;
@@ -389,9 +373,6 @@
 
   function rate(PV, PMT, FV, n, m) {
     if (n === 0) return NaN;
-
-    // Solve directly for the periodic rate. Keeping the solver in periodic
-    // rate space avoids unnecessary annual-rate conversions while iterating.
     const f = i => {
       if (1 + i <= 0) return NaN;
       const a = Math.pow(1 + i, n);
@@ -399,21 +380,14 @@
       if (Math.abs(i) < 1e-14) return -(PV + PMT * n) - FV;
       return -(PV * a + PMT * (a - 1) / i) - FV;
     };
-
-    // Bracket the periodic rate. It must be greater than -100%.
     let lo = -0.999999;
     let hi = 1;
     let flo = f(lo), fhi = f(hi);
-
-    // Expand the upper bound until the root is bracketed.
     for (let j = 0; j < 60 && flo * fhi > 0; j++) {
       hi *= 2;
       fhi = f(hi);
     }
-
     if (!Number.isFinite(flo) || flo * fhi > 0) return NaN;
-
-    // Bisection: slower than Newton, but extremely robust for TVM.
     for (let j = 0; j < 200; j++) {
       const mid = (lo + hi) / 2;
       const fm = f(mid);
@@ -433,32 +407,62 @@
     return (lo + hi) / 2;
   }
 
+  // ---------- UI helpers ----------
+  function clear() {
+    fields.forEach(k => els[k].value = "");
+    frequency.value = "12";
+    rateType = "effective";
+    rateTypeButtons.forEach(r => r.checked = r.value === rateType);
+    solveFor = "FV";
+    PmtxPer.value = "";
+    updateAppearance();
+    const cleanUrl = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, cleanUrl);
+  }
+
+  function loadUrl() {
+    const raw = location.search.slice(1);
+    if (!raw) {
+      clear();
+      return false;
+    }
+    const p = raw.split(",");
+    if (p.length >= 5) {
+      fields.forEach((k, i) => {
+        if (p[i] !== undefined && p[i] !== "") els[k].value = p[i];
+      });
+      if (p[5]) frequency.value = p[5];
+      if (p[6] && fields.includes(p[6].toUpperCase()))
+        solveFor = p[6].toUpperCase();
+      if (p[7]) {
+        const t = p[7].toLowerCase();
+        if (t === "eff" || t === "effective" || t === "e") rateType = "effective";
+        if (t === "nom" || t === "nominal" || t === "n") rateType = "nominal";
+      }
+      rateTypeButtons.forEach(r => r.checked = r.value === rateType);
+    }
+    return true;
+  }
+
   function calculate(flash = true) {
     updateAppearance();
 
-    // Collect current values (empty → NaN)
     const values = {};
     fields.forEach(k => {
-      const v = parseFloat(els[k].value);
-      values[k] = Number.isFinite(v) ? v : NaN;
+      values[k] = getValue(k);
     });
 
-    // Fields that must be filled (everything except the one we are solving for)
     const required = fields.filter(k => k !== solveFor);
     const missing  = required.filter(k => !Number.isFinite(values[k]));
 
-    // Early exit + visual feedback
     if (missing.length > 0) {
       if (flash) {
-        // Flash the missing fields pink
         missing.forEach(k => els[k].classList.add("invalid"));
-
-        // Remove the pink after 1 second
         setTimeout(() => {
           missing.forEach(k => els[k].classList.remove("invalid"));
         }, 1500);
       }
-      return;   // stop here – do not calculate
+      return;
     }
 
     const PV         = values.PV;
@@ -491,11 +495,17 @@
       case "PERIODS":
         result = periods(PV, PMT, FV, annualRate, m);
         setValue("PERIODS", result);
-        console.log(`PMT: ${PMT} * PER: ${result} = ${(PMT * result).toFixed(2)}`)
-        if (Number.isFinite(result))
-          PmtxPer.value = Number(Math.abs(PMT * result).toFixed(2));
+        if (Number.isFinite(result)) {
+          const total = Math.abs(PMT * result);
+          PmtxPer.value = total.toLocaleString("en-US", {
+            // minimumFractionDigits: 2,
+            maximumFractionDigits: 0
+          });
+        }
         break;
     }
+
+    formatAllCurrencyFields();
     updateUrl();
   }
 
@@ -505,12 +515,21 @@
     });
   }
 
+  // Always write clean numbers (no commas) into the URL
   function updateUrl() {
-    const values = fields.map(k => els[k].value || "");
-    const query = values.concat([frequency.value, solveFor, rateType === "effective" ? "Eff" : "Nom"]).join(",");
+    const values = fields.map(k => {
+      const v = getValue(k);
+      return Number.isFinite(v) ? v : "";
+    });
+    const query = values.concat([
+      frequency.value,
+      solveFor,
+      rateType === "effective" ? "Eff" : "Nom"
+    ]).join(",");
     history.replaceState(null, "", "?" + query);
   }
 
+  // ---------- event listeners ----------
   solveButtons.forEach(button => {
     button.addEventListener("click", () => {
       solveFor = button.dataset.var;
@@ -529,20 +548,30 @@
     calculate(false);
   });
 
+  // focus / blur for currency fields
+  currencyFields.forEach(id => {
+    const el = els[id];
+    el.addEventListener("focus", () => {
+      el.value = cleanNumber(el.value);
+    });
+    el.addEventListener("blur", () => {
+      const v = getValue(id);
+      if (Number.isFinite(v)) el.value = formatCurrency(v);
+    });
+  });
+
   minus.addEventListener("click", () => {
-    if([els['PV'], els['PMT']].includes(trgt)){
-      trgt.value = '-0';
+    if ([els.PV, els.PMT].includes(trgt)) {
+      trgt.value = "-0";
       trgt.focus();
     }
     trgt = minus;
   });
 
-  // document level listener, focusin bubbles up, focus doesn't
   document.addEventListener("focusin", (event) => {
-    if (event.target !== minus) 
-      trgt = event.target;
+    if (event.target !== minus) trgt = event.target;
   });
-  
+
   document.getElementById("clear").addEventListener("click", clear);
 
   document.getElementById("guide").addEventListener("click", () => {
@@ -550,9 +579,14 @@
     help.style.display = help.style.display === "block" ? "none" : "block";
   });
 
+  // ---------- init ----------
   const hasUrlData = loadUrl();
   updateAppearance();
-  if (hasUrlData) calculate();
+  if (hasUrlData) {
+    calculate();
+  } else {
+    formatAllCurrencyFields();
+  }
 })();
 </script>
 </body>
