@@ -8,10 +8,14 @@
 <link rel="shortcut icon" type="image/png" href="favicon-512.png">
 <style>
   * { box-sizing: border-box; }
+  body::-webkit-scrollbar {
+    display: none;
+  }
   body {
     margin: 0;
     background: white;
     font-family: Arial, Helvetica, sans-serif;
+    overflow-y: scroll;
   }
   .app {
     width: 300px;
@@ -25,7 +29,7 @@
   }
   .row {
     display: grid;
-    grid-template-columns: 120px 24px 1fr 20px;
+    grid-template-columns: 120px 24px 1fr 24px;
     align-items: center;
     min-height: 42px;
     margin-bottom: 0;
@@ -52,7 +56,7 @@
     75% {background-color: #ffe6ea;}
     100% {background-color: white;}
   }
-  .prefix {
+  .prefix, .percent {
     text-align: center;
     font-size: 16px;
   }
@@ -67,17 +71,6 @@
   input:focus, select:focus, button:focus {
     outline: 2px solid #9bbce8;
     outline-offset: -1px;
-  }
-  input[readonly] {
-    background: #fdfdfd;
-  }
-  .rate-prefix {
-    text-align: right;
-    padding-right: 6px;
-  }
-  .percent {
-    padding-left: 5px;
-    font-size: 16px;
   }
   .rate-type {
     height: 28px;
@@ -133,7 +126,7 @@
   }
   .help {
     display: none;
-    margin: 12px 0 0 16px;
+    margin: 12px 0 200px 16px;
     width: 285px;
     font-size: 13px;
     line-height: 1.45;
@@ -142,9 +135,10 @@
   #clear {
     background-image: url('trash.png'); 
   }
+  .saylor {padding: 0 4px;}
   @media (max-width: 360px) {
     .app { width: 300px; }
-    .row { grid-template-columns: 120px 24px 1fr 20px; }
+    .row { grid-template-columns: 120px 24px 1fr 24px; }
   }
 </style>
 </head>
@@ -172,9 +166,9 @@
 
   <div class="row">
     <button class="key" data-var="RATE">RATE</button>
-    <div class="prefix rate-prefix"></div>
+    <div class="prefix"></div>
     <input id="RATE" type="number" step="any" inputmode="decimal">
-    <span class="percent">%</span>
+    <div class="percent">%</div>
   </div>
 
   <div class="row">
@@ -211,11 +205,56 @@
   </div>
 
   <div class="help" id="help">
-    <b>TVM Calculator</b><br>
-    Enter four known values and select the fifth value to calculate.
-    Money received or loaned to you is positive; money paid or invested is negative.
-    The rate is entered as an annual percentage, while periods are
-    the number of compounding periods.
+    <p><b>TVM Calculator</b><br>
+    Enter four known values and select the fifth value 
+    to calculate. Money received or loaned to you is 
+    positive; money paid or invested is negative. The 
+    rate is entered as an annual percentage, while 
+    periods are the number of compounding periods.
+    </p>
+    <p>
+    <a href="?0,-1625,1167171.25,10,240,12,PERIODS,Eff">
+    S&P500 401K</a> - Taxable<br>
+    $1625 / mo * 12 = $19500 / yr Contrib: 390,000
+    <a href="?0,-625,2854939.09,25,240,12,PERIODS,Eff">
+    BTC Roth</a> - Tax free<br>
+    $625 / mo * 12 = $7500 / yr Contrib: 150,000<br>
+    <a href="?-7800,0,676542.16,25,240,12,FV,Eff">
+    BTC Roth - Price</a><br>
+    Try a 30% Rate<br>
+    </p>
+    <p>
+    Michael Saylor's Bitcoin24<br>
+    <a href="?-65,0,3263.18,20.5,21,1,FV,Eff" class="saylor">
+    Bear,</a> 
+    <a href="?-65,0,13434.60,28.9,21,1,FV,Eff" class="saylor">
+    Base</a> and
+    <a href="?-65,0,49056.88,37.1,21,1,FV,Eff" class="saylor">
+    Bull</a> case.<br>
+    Try a 11 year period
+    </p>
+    <p>
+    <a href="?500000,-2946.85,0,6,360,12,PMT,Eff">
+    Mortgage 09/26</a><br>
+    Press PERIODS. Computes Pmt * Per 
+    </p>
+    <p>
+    <a href="?6000,-100,0,20,165.07,12,PERIODS,Eff">
+    CC Payout - $16,500 Pmt: $-100 Per: 14 yrs </a><br>
+    <a href="?6000,-300.62,0,20,24,12,PERIODS,Eff">
+    CC Payout -   $7,200 Pmt: $-300 Per:   2 yrs</a><br>
+    <a href="?-6000,100,6000,20,600,12,PMT,Nom">
+    CC Annuity - Per: 50 yrs Rate: Nom</a><br>
+    A CC is like a 20%+ Annuity for the Banksters. Note the 50 yr Per. Compute Pmt for 20 yrs.<br>
+    </p>
+    <p>
+    A <a href="?-1,0,10,25.89,10,1,RATE,Eff">10x in 10 yrs</a> will 
+    <a href="?-1,0,2,25.89,3.01,1,PERIODS,Eff">2x in 3 yrs</a><br>
+    Note the rate.<br>
+    A <a href="?-1,0,10,33.35,8,1,RATE,Eff">10x in 8 yrs</a> will 
+    <a href="?-1,0,3,33.35,3.82,1,PERIODS,Eff">3x in &lt;4 yrs</a><br>
+    This is my bull case.
+    </p>
   </div>
 </div>
 
