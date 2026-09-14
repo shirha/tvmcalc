@@ -152,19 +152,19 @@
   <div class="row">
     <button class="key" data-var="PV">PV</button>
     <div class="prefix">$</div>
-    <input id="PV" type="text" step="any" inputmode="decimal">
+    <input id="PV" type="text" step="any" inputmode="decimal"> <!-- pattern="-?\d+(\.\d+)?" -->
   </div>
 
   <div class="row">
     <button class="key" data-var="PMT">PMT</button>
     <div class="prefix">$</div>
-    <input id="PMT" type="text" step="any" inputmode="decimal">
+    <input id="PMT" type="text" step="any" inputmode="decimal"> <!-- pattern="-?\d+(\.\d+)?" -->
   </div>
 
   <div class="row">
     <button class="key" data-var="FV">FV</button>
     <div class="prefix">$</div>
-    <input id="FV" type="text" step="any" inputmode="decimal">
+    <input id="FV" type="text" step="any" inputmode="decimal"> <!-- pattern="-?\d+(\.\d+)?" -->
   </div>
 
   <div class="row">
@@ -415,14 +415,14 @@
     rateType = "effective";
     rateTypeButtons.forEach(r => r.checked = r.value === rateType);
     solveFor = "FV";
-    PmtxPer.value = "";
     updateAppearance();
+    PmtxPer.value = "";
     const cleanUrl = window.location.origin + window.location.pathname;
     window.history.replaceState({}, document.title, cleanUrl);
   }
 
   function loadUrl() {
-    const raw = location.search.slice(1);
+    const raw = location.search.slice(1); // skip '?'
     if (!raw) {
       clear();
       return false;
@@ -559,12 +559,18 @@
       const v = getValue(id);
       if (Number.isFinite(v)) el.value = formatCurrency(v);
     });
+    el.addEventListener('input', () => {
+      el.value = cleanNumber(el.value);
+    });
   });
 
   minus.addEventListener("click", () => {
     if ([els.PV, els.PMT].includes(trgt)) {
-      trgt.value = "-0";
-      trgt.focus();
+      if (trgt.value.startsWith('-')) {
+        trgt.value = trgt.value.substring(1);
+      } else if (trgt.value !== '') {
+        trgt.value = '-' + trgt.value;
+      }
     }
     trgt = minus;
   });
