@@ -152,32 +152,33 @@
   <div class="row">
     <button class="key" data-var="PV">PV</button>
     <div class="prefix">$</div>
-    <input id="PV" type="text" step="any" inputmode="decimal"> <!-- pattern="-?\d+(\.\d+)?" -->
+    <input id="PV" type="text" step="any" inputmode="decimal">
+    <!-- pattern="-?\d+(\.\d+)?" see Listener('input' -->
   </div>
 
   <div class="row">
     <button class="key" data-var="PMT">PMT</button>
     <div class="prefix">$</div>
-    <input id="PMT" type="text" step="any" inputmode="decimal"> <!-- pattern="-?\d+(\.\d+)?" -->
+    <input id="PMT" type="text" step="any" inputmode="decimal">
   </div>
 
   <div class="row">
     <button class="key" data-var="FV">FV</button>
     <div class="prefix">$</div>
-    <input id="FV" type="text" step="any" inputmode="decimal"> <!-- pattern="-?\d+(\.\d+)?" -->
+    <input id="FV" type="text" step="any" inputmode="decimal">
   </div>
 
   <div class="row">
     <button class="key" data-var="RATE">RATE</button>
     <div class="prefix"></div>
-    <input id="RATE" type="number" step="any" inputmode="decimal">
+    <input id="RATE" type="text" step="any" inputmode="decimal">
     <div class="percent">%</div>
   </div>
 
   <div class="row">
     <button class="key" data-var="PERIODS">PERIODS</button>
     <div class="prefix"></div>
-    <input id="PERIODS" type="number" step="any" inputmode="decimal">
+    <input id="PERIODS" type="text" step="any" inputmode="decimal">
   </div>
 
   <div class="row">
@@ -417,6 +418,7 @@
     solveFor = "FV";
     updateAppearance();
     PmtxPer.value = "";
+
     const cleanUrl = window.location.origin + window.location.pathname;
     window.history.replaceState({}, document.title, cleanUrl);
   }
@@ -432,6 +434,7 @@
       fields.forEach((k, i) => {
         if (p[i] !== undefined && p[i] !== "") els[k].value = p[i];
       });
+      formatAllCurrencyFields();
       if (p[5]) frequency.value = p[5];
       if (p[6] && fields.includes(p[6].toUpperCase()))
         solveFor = p[6].toUpperCase();
@@ -506,7 +509,7 @@
         break;
     }
 
-    formatAllCurrencyFields();
+    // formatAllCurrencyFields();
     updateUrl();
   }
 
@@ -559,6 +562,10 @@
       const v = getValue(id);
       if (Number.isFinite(v)) el.value = formatCurrency(v);
     });
+  });
+
+  fields.forEach(id => {
+    const el = els[id];
     el.addEventListener('input', () => {
       el.value = cleanNumber(el.value);
     });
@@ -589,11 +596,7 @@
   // ---------- init ----------
   const hasUrlData = loadUrl();
   updateAppearance();
-  if (hasUrlData) {
-    calculate();
-  } else {
-    formatAllCurrencyFields();
-  }
+  if (hasUrlData) calculate();
 })();
 </script>
 </body>
