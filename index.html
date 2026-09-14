@@ -432,7 +432,7 @@
     const p = raw.split(",");
     if (p.length >= 5) {
       fields.forEach((k, i) => {
-        if (p[i] !== undefined && p[i] !== "") els[k].value = p[i];
+        els[k].value = (p[i] === "" || p[i] === undefined) ? "" : p[i];
       });
       formatAllCurrencyFields();
       if (p[5]) frequency.value = p[5];
