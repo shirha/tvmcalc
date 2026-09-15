@@ -296,15 +296,6 @@
     return Number.isFinite(v) ? v : NaN;
   }
 
-  function formatCurrency(value) {
-    if (!Number.isFinite(value)) return "";
-    if (Math.abs(value) < 0.005) value = 0;
-    return value.toLocaleString("en-US", {
-      // minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
-  }
-
   function setValue(id, value) {
     if (!Number.isFinite(value)) {
       els[id].value = "";
@@ -317,6 +308,15 @@
     } else {
       els[id].value = Number(value.toFixed(2));
     }
+  }
+
+  function formatCurrency(value) {
+    if (!Number.isFinite(value)) return "";
+    if (Math.abs(value) < 0.005) value = 0;
+    return value.toLocaleString("en-US", {
+      // minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
   }
 
   function formatAllCurrencyFields() {
@@ -597,6 +597,23 @@
   const hasUrlData = loadUrl();
   updateAppearance();
   if (hasUrlData) calculate();
+
+  // Temporary debug access
+  window.tvm = {
+    trgt,
+    fields,
+    currencyFields,
+    els,
+    frequency,
+    PmtxPer,
+    rateType,
+    solveFor,
+    calculate,      // ()
+    getValue,       // (id)
+    setValue,       // (id, value)
+    cleanNumber,    // (str)
+    formatCurrency  // (value)
+  };
 })();
 </script>
 </body>
