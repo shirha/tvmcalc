@@ -605,7 +605,7 @@
   const hasUrlData = loadUrl();
   updateAppearance();
   if (hasUrlData) calculate();
-  document.getElementById('client-width').textContent = document.body.clientWidth;
+  document.getElementById('client-width').textContent = `clientWidth: ${document.documentElement.clientWidth}, dpr: ${window.devicePixelRatio}`;
 
   // Temporary debug access
   window.tvm = {
