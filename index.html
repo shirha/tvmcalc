@@ -288,8 +288,6 @@
   const PmtxPer = document.getElementById("PmtxPer");
   const minus = document.getElementById("minus");
   let trgt = minus;
-  let solveFor = "FV";
-  let rateType = "effective";
 
   // ---------- helpers for commas ----------
   function cleanNumber(str) {
@@ -427,7 +425,6 @@
     rateTypeButtons.forEach(r => r.checked = r.value === rateType);
     solveFor = "FV";
     updateAppearance();
-    PmtxPer.value = "";
 
     const cleanUrl = window.location.origin + window.location.pathname;
     window.history.replaceState({}, document.title, cleanUrl);
@@ -605,8 +602,8 @@
 
   // ---------- init ----------
   const hasUrlData = loadUrl();
-  updateAppearance();
   if (hasUrlData) calculate();
+
   document.getElementById('client-width').textContent = 
     `client: ${document.documentElement.clientWidth} × ${document.documentElement.clientHeight}, dpr: ${window.devicePixelRatio}`;
 
