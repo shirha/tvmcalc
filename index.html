@@ -139,6 +139,9 @@
   .saylor {
     padding: 0 6px;
   }
+  #client-width {
+    font-size: 10px;
+  }
   @media (max-width: 360px) {
     .app { width: 300px; }
     .row { grid-template-columns: 120px 24px 1fr 24px; }
@@ -268,6 +271,7 @@
     <a href="?-1,0,3,33.35,3.82,1,PERIODS,Eff">3x in &lt;4 yrs</a><br>
     This is my bull case.
     </p>
+    <p id="client-width"></p>
   </div>
 </div>
 
@@ -452,6 +456,26 @@
     return true;
   }
 
+  // Always write clean numbers (no commas) into the URL
+  function updateUrl() {
+    const values = fields.map(k => {
+      const v = getValue(k);
+      return Number.isFinite(v) ? v : "";
+    });
+    const query = values.concat([
+      frequency.value,
+      solveFor,
+      rateType === "effective" ? "Eff" : "Nom"
+    ]).join(",");
+    history.replaceState(null, "", "?" + query);
+  }
+
+  function updateAppearance() {
+    solveButtons.forEach(b => {
+      b.classList.toggle("solve", b.dataset.var === solveFor);
+    });
+  }
+
   function calculate(flash = true) {
     updateAppearance();
 
@@ -515,26 +539,6 @@
 
     // formatAllCurrencyFields();
     updateUrl();
-  }
-
-  function updateAppearance() {
-    solveButtons.forEach(b => {
-      b.classList.toggle("solve", b.dataset.var === solveFor);
-    });
-  }
-
-  // Always write clean numbers (no commas) into the URL
-  function updateUrl() {
-    const values = fields.map(k => {
-      const v = getValue(k);
-      return Number.isFinite(v) ? v : "";
-    });
-    const query = values.concat([
-      frequency.value,
-      solveFor,
-      rateType === "effective" ? "Eff" : "Nom"
-    ]).join(",");
-    history.replaceState(null, "", "?" + query);
   }
 
   // ---------- event listeners ----------
@@ -601,6 +605,7 @@
   const hasUrlData = loadUrl();
   updateAppearance();
   if (hasUrlData) calculate();
+  document.getElementById('client-width').textContent = document.body.clientWidth;
 
   // Temporary debug access
   window.tvm = {
