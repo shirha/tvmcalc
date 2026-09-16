@@ -140,8 +140,12 @@
     padding: 0 6px;
   }
   #client-width {
-    font-size: 10px;
-    display: block;
+    font-size: 12px;
+    align-items: center;
+  }
+  img {
+    height: 12px;
+    transform: translateY(2px);
   }
   @media (max-width: 360px) {
     .app { width: 300px; }
@@ -604,8 +608,8 @@
   const hasUrlData = loadUrl();
   if (hasUrlData) calculate();
 
-  document.getElementById('client-width').textContent = 
-    `client: ${document.documentElement.clientWidth} × ${document.documentElement.clientHeight}, dpr: ${window.devicePixelRatio}`;
+  document.getElementById('client-width').innerHTML = '<a href="tvmcalc.html" target="_blank"><img src=linkicon.png></a> ' +
+    `<span>client: ${document.documentElement.clientWidth} × ${document.documentElement.clientHeight}, dpr: ${window.devicePixelRatio}</span>`;
 
   // Temporary debug access
   window.tvm = {
