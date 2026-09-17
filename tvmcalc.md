@@ -95,21 +95,27 @@ $$
 Special case when `i ≈ 0`: \( FV = -(PV + PMT\cdot n) \).
 
 ### `presentValue(PMT, FV, annualRate, n, m)`
-\[
+
+$$
 PV = -\frac{FV + PMT\cdot\frac{(1+i)^n-1}{i}}{(1+i)^n}
-\]
+$$
+
 Special case when `i ≈ 0`: \( PV = -(FV + PMT\cdot n) \).
 
 ### `payment(PV, FV, annualRate, n, m)`
-\[
+
+$$
 PMT = -\frac{(PV\cdot(1+i)^n + FV)\cdot i}{(1+i)^n - 1}
-\]
+$$
+
 Special case when `i ≈ 0`: \( PMT = -(PV + FV)/n \).
 
 ### `periods(PV, PMT, FV, annualRate, m)`
-\[
+
+$$
 n = \frac{\ln\bigl(\frac{PMT - FV\cdot i}{PV\cdot i + PMT}\bigr)}{\ln(1+i)}
-\]
+$$
+
 Special case when `i ≈ 0`: \( n = -(PV + FV)/PMT \).
 
 **Important edge case**  
@@ -125,9 +131,9 @@ because the payment exactly equals the interest on the balance, making the numbe
 ### `rate(PV, PMT, FV, n, m)`
 Solves for the periodic rate `i` using **bisection** on the residual function
 
-\[
+$$
 f(i) = -(PV\cdot(1+i)^n + PMT\cdot\frac{(1+i)^n-1}{i}) - FV
-\]
+$$
 
 - Search interval starts at `[-0.999999, 1]` and expands the upper bound if necessary.  
 - 200 iterations or until the residual is smaller than `1e-7`.  
