@@ -87,9 +87,11 @@ Returns `NaN` if `1 + annualRate ≤ 0` (effective case).
 Inverse of the above – converts a solved periodic rate back to an annual percentage for display.
 
 ### `futureValue(PV, PMT, annualRate, n, m)`
+
 $$
 FV = -\Bigl(PV\cdot(1+i)^n + PMT\cdot\frac{(1+i)^n-1}{i}\Bigr)
 $$
+
 Special case when `i ≈ 0`: \( FV = -(PV + PMT\cdot n) \).
 
 ### `presentValue(PMT, FV, annualRate, n, m)`
