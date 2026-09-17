@@ -79,7 +79,7 @@ All formulas use the classic ordinary annuity equations (payments at the **end**
 Converts the annual rate into a periodic rate `i`.
 
 - Effective: $\( i = (1 + r)^{1/m} - 1 \)$
-- Nominal:   \( i = r / m \)
+- Nominal:   $\( i = r / m \)$
 
 Returns `NaN` if `1 + annualRate ≤ 0` (effective case).
 
