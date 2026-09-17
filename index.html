@@ -44,7 +44,7 @@
   .key.solve {
     background: #dce8fa;
   }
-/*  input.invalid {
+  /*input.invalid {
     background-color:   #ffe6ea;
     transition: background-color 0.5s;
   }*/
@@ -149,9 +149,12 @@
   }
   .header {
       display: flex;
-      align-items: center; /* Centers items vertically */
-      justify-content: flex-start; /* Keeps items left-aligned */
-      gap: 20px; /* Optional: Adds space between the image and the text */
+      align-items: center;
+      justify-content: flex-start;
+      gap: 20px;
+  }
+  .header img {
+      height: 32px;
   }
   .modal-overlay {
       display: none;
@@ -175,9 +178,6 @@
       color: white;
       margin: 0 auto;
       text-align: center;
-  }
-  .header img {
-      height: 32px;
   }
   @media (max-width: 360px) {
     .app { width: 300px; }

@@ -268,4 +268,4 @@ Examples are embedded in the help panel (S&P 500 401k, Bitcoin Roth, mortgage, c
 
 ---
 
-This document covers every function, the mathematical model, the UI interaction model, and the shareable-URL mechanism of the TVM Calculator.
+This document covers every function, the mathematical model, the UI interaction model, and the shareable-URL mechanism of the TVM Calculator.—Grok
