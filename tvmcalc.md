@@ -92,7 +92,7 @@ $$
 FV = -\Bigl(PV\cdot(1+i)^n + PMT\cdot\frac{(1+i)^n-1}{i}\Bigr)
 $$
 
-Special case when `i ≈ 0`: \( FV = -(PV + PMT\cdot n) \).
+Special case when `i ≈ 0`: $( FV = -(PV + PMT\cdot n) )$.
 
 ### `presentValue(PMT, FV, annualRate, n, m)`
 
@@ -100,7 +100,7 @@ $$
 PV = -\frac{FV + PMT\cdot\frac{(1+i)^n-1}{i}}{(1+i)^n}
 $$
 
-Special case when `i ≈ 0`: \( PV = -(FV + PMT\cdot n) \).
+Special case when `i ≈ 0`: $( PV = -(FV + PMT\cdot n) )$.
 
 ### `payment(PV, FV, annualRate, n, m)`
 
@@ -108,7 +108,7 @@ $$
 PMT = -\frac{(PV\cdot(1+i)^n + FV)\cdot i}{(1+i)^n - 1}
 $$
 
-Special case when `i ≈ 0`: \( PMT = -(PV + FV)/n \).
+Special case when `i ≈ 0`: $( PMT = -(PV + FV)/n )$.
 
 ### `periods(PV, PMT, FV, annualRate, m)`
 
@@ -116,7 +116,7 @@ $$
 n = \frac{\ln\bigl(\frac{PMT - FV\cdot i}{PV\cdot i + PMT}\bigr)}{\ln(1+i)}
 $$
 
-Special case when `i ≈ 0`: \( n = -(PV + FV)/PMT \).
+Special case when `i ≈ 0`: $( n = -(PV + FV)/PMT )$.
 
 **Important edge case**  
 When the numerator and denominator are both zero (or extremely close to zero) the formula returns `NaN`.  
