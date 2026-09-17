@@ -1,3 +1,3 @@
 # tvmcalc
 
-[tvmcalc](https://github.com/shirha/tvmcalc/blob/main/tvmcalc.md)
+[tvmcalc.md](https://github.com/shirha/tvmcalc/blob/main/tvmcalc.md)
