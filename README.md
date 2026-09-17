@@ -30,4 +30,4 @@ Solves for the periodic rate `i` using **bisection** on the residual function
 f(i) = -(PV\cdot(1+i)^n + PMT\cdot\frac{(1+i)^n-1}{i}) - FV
 \]
 
-[tvmcalc](https://raw.githubusercontent.com/shirha/tvmcalc/main/tvmcalc.html)
+[tvmcalc](https://shirha.github.io/tvmcalc/tvmcalc.html)
